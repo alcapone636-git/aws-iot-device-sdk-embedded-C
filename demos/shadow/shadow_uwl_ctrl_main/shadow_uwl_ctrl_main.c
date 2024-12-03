@@ -21,22 +21,22 @@
  */
 
 /**
- * @file shadow_demo_main.c
+ * @file shadow_uwl_ctrl_main.c
  *
  * @brief Demo for showing how to use the Device Shadow library's API. This version
  * of Device Shadow API provide macros and helper functions for assembling MQTT topics
  * strings, and for determining whether an incoming MQTT message is related to a
  * device shadow. The shadow can be either the classic shadow or a named shadow. Change
  * #SHADOW_NAME to select the shadow. The Device Shadow library does not depend on a MQTT library,
- * therefore the code for MQTT connections are placed in another file (shadow_demo_helpers.c)
+ * therefore the code for MQTT connections are placed in another file (shadow_uwl_ctrl_demo_helpers.c)
  * to make it easy to read the code using Device Shadow library.
  *
  * This example assumes there is a powerOn state in the device shadow. It does the
  * following operations:
- * 1. Establish a MQTT connection by using the helper functions in shadow_demo_helpers.c.
+ * 1. Establish a MQTT connection by using the helper functions in shadow_uwl_ctrl_demo_helpers.c.
  * 2. Assemble strings for the MQTT topics of device shadow, by using macros defined by the Device Shadow library.
- * 3. Subscribe to those MQTT topics by using helper functions in shadow_demo_helpers.c.
- * 4. Publish a desired state of powerOn by using helper functions in shadow_demo_helpers.c.  That will cause
+ * 3. Subscribe to those MQTT topics by using helper functions in shadow_uwl_ctrl_demo_helpers.c.
+ * 4. Publish a desired state of powerOn by using helper functions in shadow_uwl_ctrl_demo_helpers.c.  That will cause
  * a delta message to be sent to device.
  * 5. Handle incoming MQTT messages in eventCallback, determine whether the message is related to the device
  * shadow by using a function defined by the Device Shadow library (Shadow_MatchTopicString). If the message is a
@@ -67,7 +67,7 @@
 #include "clock.h"
 
 /* shadow demo helpers header. */
-#include "shadow_demo_helpers.h"
+#include "shadow_uwl_ctrl_demo_helpers.h"
 
 /**
  * @brief The length of #THING_NAME.
@@ -100,6 +100,8 @@
     "},"                        \
     "\"clientToken\":\"%06lu\"" \
     "}"
+
+
 
 /**
  * @brief The expected size of #SHADOW_DESIRED_JSON.
@@ -663,7 +665,7 @@ static void eventCallback( MQTTContext_t * pMqttContext,
  *
  * The helper functions this demo uses for MQTT operations have internal
  * loops to process incoming messages. Those are not the focus of this demo
- * and therefore, are placed in a separate file shadow_demo_helpers.c.
+ * and therefore, are placed in a separate file shadow_uwl_ctrl_demo_helpers.c.
  */
 int main( int argc,
           char ** argv )
@@ -905,12 +907,12 @@ int main( int argc,
 
         if( returnStatus == EXIT_SUCCESS )
         {
-            LogInfo( ( "Demo iteration %d is successful.", demoRunCount ) );
+            LogInfo( ( "UWL CTRL Demo iteration %d is successful.", demoRunCount ) );
         }
         /* Attempt to retry a failed iteration of demo for up to #SHADOW_MAX_DEMO_LOOP_COUNT times. */
         else if( demoRunCount < SHADOW_MAX_DEMO_LOOP_COUNT )
         {
-            LogWarn( ( "Demo iteration %d failed. Retrying...", demoRunCount ) );
+            LogWarn( ( "UWL CTRL Demo iteration %d failed. Retrying...", demoRunCount ) );
             sleep( DELAY_BETWEEN_DEMO_RETRY_ITERATIONS_S );
         }
         /* Failed all #SHADOW_MAX_DEMO_LOOP_COUNT demo iterations. */
@@ -924,7 +926,7 @@ int main( int argc,
     if( returnStatus == EXIT_SUCCESS )
     {
         /* Log message indicating the demo completed successfully. */
-        LogInfo( ( "Demo completed successfully." ) );
+        LogInfo( ( "UWL CTRL Demo completed successfully." ) );
     }
 
     return returnStatus;

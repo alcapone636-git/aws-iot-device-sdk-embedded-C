@@ -20,8 +20,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DEMO_CONFIG_H_
-#define DEMO_CONFIG_H_
+#ifndef UWL_CTRL_CONFIG_H_
+#define UWL_CTRL_CONFIG_H_
 
 /**************************************************/
 /******* DO NOT CHANGE the following order ********/
@@ -38,7 +38,7 @@
 
 /* Logging configuration for the Demo. */
 #ifndef LIBRARY_LOG_NAME
-    #define LIBRARY_LOG_NAME     "DEMO"
+    #define LIBRARY_LOG_NAME     "UWL_CTRL_SHADOW"
 #endif
 #ifndef LIBRARY_LOG_LEVEL
     #define LIBRARY_LOG_LEVEL    LOG_INFO
@@ -51,6 +51,8 @@
 
 /**
  * @brief Details of the MQTT broker to connect to.
+ *
+ * This is the Thing's Rest API Endpoint for AWS IoT.
  *
  * @note Your AWS IoT Core endpoint can be found in the AWS IoT console under
  * Settings/Custom Endpoint, or using the describe-endpoint API.
@@ -68,9 +70,7 @@
  * @note Port 443 requires use of the ALPN TLS extension with the ALPN protocol
  * name. When using port 8883, ALPN is not required.
  */
-#ifndef AWS_MQTT_PORT
-    #define AWS_MQTT_PORT    ( 8883 )
-#endif
+#define AWS_MQTT_PORT    ( 8883 )
 
 /**
  * @brief Path of the file containing the server's root CA certificate.
@@ -120,46 +120,27 @@
 
 
 /**
- * @brief The username value for authenticating client to MQTT broker when
- * username/password based client authentication is used.
+ * @brief Predefined thing name.
  *
- * Refer to the AWS IoT documentation below for details regarding client
- * authentication with a username and password.
- * https://docs.aws.amazon.com/iot/latest/developerguide/custom-authentication.html
- * As mentioned in the link above, an authorizer setup needs to be done to use
- * username/password based client authentication.
- *
- * @note AWS IoT message broker requires either a set of client certificate/private key
- * or username/password to authenticate the client. If this config is defined,
- * the username and password will be used instead of the client certificate and
- * private key for client authentication.
- *
- * #define CLIENT_USERNAME    "...insert here..."
+ * This is the predefined thing name and could be compiled in ROM code.
  */
-
-/**
- * @brief The password value for authenticating client to MQTT broker when
- * username/password based client authentication is used.
- *
- * Refer to the AWS IoT documentation below for details regarding client
- * authentication with a username and password.
- * https://docs.aws.amazon.com/iot/latest/developerguide/custom-authentication.html
- * As mentioned in the link above, an authorizer setup needs to be done to use
- * username/password based client authentication.
- *
- * @note AWS IoT message broker requires either a set of client certificate/private key
- * or username/password to authenticate the client.
- *
- * #define CLIENT_PASSWORD    "...insert here..."
- */
+#ifndef THING_NAME
+    // #define THING_NAME    "testShadow"
+    #define THING_NAME    "Onion-F5A0"
+#endif
 
 /**
  * @brief MQTT client identifier.
  *
  * No two clients may use the same client identifier simultaneously.
+ *
+ * @note The client identifier should match the Thing name per
+ * AWS IoT Security best practices:
+ * https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
+ * However, it is not required for the demo to run.
  */
 #ifndef CLIENT_IDENTIFIER
-    #define CLIENT_IDENTIFIER    "Onion-F5A0"
+    #define CLIENT_IDENTIFIER    THING_NAME
 #endif
 
 /**
@@ -195,4 +176,18 @@
 #include "core_mqtt.h"
 #define MQTT_LIB    "core-mqtt@" MQTT_LIBRARY_VERSION
 
-#endif /* ifndef DEMO_CONFIG_H_ */
+/**
+ * @brief Predefined shadow name.
+ *
+ * Defaults to unnamed "Classic" shadow. Change to a custom string to use a named shadow.
+ */
+#ifndef SHADOW_NAME
+    #define SHADOW_NAME    SHADOW_NAME_CLASSIC
+#endif
+
+/**
+ * @brief The length of #SHADOW_NAME.
+ */
+#define SHADOW_NAME_LENGTH    ( ( uint16_t ) ( sizeof( SHADOW_NAME ) - 1 ) )
+
+#endif /* ifndef UWL_CTRL_CONFIG_H_ */

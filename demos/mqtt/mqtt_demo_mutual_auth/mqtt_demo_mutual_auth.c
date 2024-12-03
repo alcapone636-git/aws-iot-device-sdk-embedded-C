@@ -175,7 +175,7 @@
  * The topic name starts with the client identifier to ensure that each demo
  * interacts with a unique topic name.
  */
-#define MQTT_EXAMPLE_TOPIC                       CLIENT_IDENTIFIER "/example/topic"
+#define MQTT_EXAMPLE_TOPIC                       CLIENT_IDENTIFIER "/shadow/topic"
 
 /**
  * @brief Length of client MQTT topic.

@@ -59,6 +59,8 @@
  *
  * #define AWS_IOT_ENDPOINT               "...insert here..."
  */
+#define AWS_IOT_ENDPOINT               "ae8tbzz8c36d6-ats.iot.ap-southeast-2.amazonaws.com"
+
 
 /**
  * @brief AWS IoT MQTT broker port number.
@@ -100,6 +102,8 @@
  *
  * #define CLIENT_CERT_PATH    "...insert here..."
  */
+#define CLIENT_CERT_PATH    "/home/sergio/WorkDir/20_AWS/omega-F5A0/_Credentials/Onion-F5A0-certificate.pem.crt"
+
 
 /**
  * @brief Path of the file containing the client's private key.
@@ -112,6 +116,8 @@
  *
  * #define CLIENT_PRIVATE_KEY_PATH    "...insert here..."
  */
+#define CLIENT_PRIVATE_KEY_PATH    "/home/sergio/WorkDir/20_AWS/omega-F5A0/_Credentials/Onion-F5A0-private.pem.key"
+
 
 /**
  * @brief Predefined thing name.
@@ -119,7 +125,8 @@
  * This is the predefined thing name and could be compiled in ROM code.
  */
 #ifndef THING_NAME
-    #define THING_NAME    "testShadow"
+    // #define THING_NAME    "testShadow"
+    #define THING_NAME    "Onion-F5A0"
 #endif
 
 /**
@@ -153,7 +160,7 @@
  * on. The current value is given as an example. Please update for your specific
  * operating system version.
  */
-#define OS_VERSION                "18.04 LTS"
+#define OS_VERSION                "22.04 LTS"
 
 /**
  * @brief The name of the hardware platform the application is running on. The
