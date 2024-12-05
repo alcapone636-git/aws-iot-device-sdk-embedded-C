@@ -115,8 +115,7 @@
  *
  * In your own application, you could calculate the size of the json doc in this way.
  */
-// #define SHADOW_DESIRED_JSON_LENGTH    ( sizeof( SHADOW_DESIRED_JSON ) - 3 )
-#define SHADOW_DESIRED_JSON_LENGTH    ( sizeof( SHADOW_DESIRED_JSON ) + 3 )
+#define SHADOW_DESIRED_JSON_LENGTH    ( sizeof( SHADOW_DESIRED_JSON ) - 3 )
 
 /**
  * @brief Format string representing a Shadow document with a "reported" state.
@@ -152,8 +151,7 @@
  * its full size is known at compile-time by pre-calculation. Users could refer to
  * the way how to calculate the actual length in #SHADOW_DESIRED_JSON_LENGTH.
  */
-// #define SHADOW_REPORTED_JSON_LENGTH    ( sizeof( SHADOW_REPORTED_JSON ) - 3 )
-#define SHADOW_REPORTED_JSON_LENGTH    ( sizeof( SHADOW_REPORTED_JSON ) + 3 )
+#define SHADOW_REPORTED_JSON_LENGTH    ( sizeof( SHADOW_REPORTED_JSON ) - 3 )
 
 /**
  * @brief The maximum number of times to run the loop in this demo.

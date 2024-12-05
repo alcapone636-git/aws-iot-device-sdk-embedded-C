@@ -104,7 +104,6 @@
  */
 #define CLIENT_CERT_PATH    "/home/sergio/WorkDir/20_AWS/omega-F5A0/_Credentials/Onion-F5A0-certificate.pem.crt"
 
-
 /**
  * @brief Path of the file containing the client's private key.
  *
@@ -125,7 +124,6 @@
  * This is the predefined thing name and could be compiled in ROM code.
  */
 #ifndef THING_NAME
-    // #define THING_NAME    "testShadow"
     #define THING_NAME    "Onion-F5A0"
 #endif
 
