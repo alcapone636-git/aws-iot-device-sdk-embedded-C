@@ -106,7 +106,9 @@
     "{"                               \
     "\"state\":{"                     \
     "\"reported\":{"                  \
-    "\"powerOn\":%01d"                \
+    "\"powerOn\":%01d,"               \
+    "\"PoolLight\":%.2f,"             \
+    "\"SpaLight\":%.2f"               \
     "}"                               \
     "},"                              \
     "\"clientToken\":\"%06lu\""       \
@@ -126,8 +128,8 @@
  *
  * In your own application, you could calculate the size of the json doc in this way.
  */
-#define SHADOW_DESIRED_JSON_LENGTH    ( sizeof( SHADOW_DESIRED_JSON ) - 3 )
-// #define SHADOW_DESIRED_JSON_LENGTH    ( sizeof( SHADOW_DESIRED_JSON ) + 3 )
+// #define SHADOW_DESIRED_JSON_LENGTH    ( sizeof( SHADOW_DESIRED_JSON ) - 3 )
+#define SHADOW_DESIRED_JSON_LENGTH    ( sizeof( SHADOW_DESIRED_JSON ) + 3 )
 
 
 
@@ -166,7 +168,9 @@
     "{"                               \
     "\"state\":{"                     \
     "\"reported\":{"                  \
-    "\"powerOn\":%01d ,"              \
+    "\"powerOn\":%01d,"               \
+    "\"PoolLight\":%.2f,"             \
+    "\"SpaLight\":%.2f"               \
     "}"                               \
     "},"                              \
     "\"clientToken\":\"%06lu\""       \
@@ -181,8 +185,8 @@
  * its full size is known at compile-time by pre-calculation. Users could refer to
  * the way how to calculate the actual length in #SHADOW_DESIRED_JSON_LENGTH.
  */
-#define SHADOW_REPORTED_JSON_LENGTH    ( sizeof( SHADOW_REPORTED_JSON ) - 3 )
-// #define SHADOW_REPORTED_JSON_LENGTH    ( sizeof( SHADOW_REPORTED_JSON ) + 3 )
+// #define SHADOW_REPORTED_JSON_LENGTH    ( sizeof( SHADOW_REPORTED_JSON ) - 3 )
+#define SHADOW_REPORTED_JSON_LENGTH    ( sizeof( SHADOW_REPORTED_JSON ) + 3 )
 
 /**
  * @brief The maximum number of times to run the loop in this demo.
@@ -387,6 +391,8 @@ static void updateDeltaHandler( MQTTPublishInfo_t * pPublishInfo )
     static uint32_t currentVersion = 0; /* Remember the latestVersion # we've ever received */
     uint32_t version = 0U;
     uint32_t newState = 0U;
+    float newPoolLight = 0.0f;  // Variable to hold the new Pool Light GPO value
+    float newSpaLight = 0.0f;   // Variable to hold the new Spa Light GPO value
     char * outValue = NULL;
     uint32_t outValueLength = 0U;
     JSONStatus_t result = JSONSuccess;
@@ -498,6 +504,110 @@ static void updateDeltaHandler( MQTTPublishInfo_t * pPublishInfo )
     else
     {
         LogError( ( "No powerOn in json document!!" ) );
+        eventCallbackError = true;
+    }
+
+    /* When the version is much newer than the one we retained, that means the Pool Light GPO
+     * state is valid for us. */
+    if( version > currentVersion )
+    {
+        /* Set to received version as the current version. */
+        currentVersion = version;
+
+        /* Get Pool Light GPO state from json documents. */
+        result = JSON_Search( ( char * ) pPublishInfo->pPayload,
+                              pPublishInfo->payloadLength,
+                              "state.PoolLight",
+                              sizeof( "state.PoolLight" ) - 1,
+                              &outValue,
+                              ( size_t * ) &outValueLength );
+    }
+    else
+    {
+        /* In this demo, we discard the incoming message
+         * if the version number is not newer than the latest
+         * that we've received before. Your application may use a
+         * different approach.
+         */
+        LogWarn( ( "The received version is smaller than current one!!" ) );
+    }
+
+    if( result == JSONSuccess )
+    {
+        /* Convert the PoolLight state value to a float value. */
+        newPoolLight = ( float ) strtof( outValue, NULL );      // The definition ( float ) is not required in this line as this is what the function strtof() does 
+
+        LogInfo( ( "The new Pool Light GPO state newPoolLight:%.2f, currentPoolLight:%.2f \r\n",
+                   newPoolLight, currentPoolLight ) );
+
+        if( newPoolLight != currentPoolLight )
+        {
+            /* The received PoolLight state is different from the one we retained before, so we switch them
+             * and set the flag. */
+            currentPoolLight = newPoolLight;
+
+            /* State change will be handled in main(), where we will publish a "reported"
+             * state to the device shadow. We do not do it here because we are inside of
+             * a callback from the MQTT library, so that we don't re-enter
+             * the MQTT library. */
+            stateChanged = true;
+        }
+    }
+    else
+    {
+        LogError( ( "No PoolLight in json document!!" ) );
+        eventCallbackError = true;
+    }
+
+    /* When the version is much newer than the one we retained, that means the Spa Light GPO
+     * state is valid for us. */
+    if( version > currentVersion )
+    {
+        /* Set to received version as the current version. */
+        currentVersion = version;
+
+        /* Get Spa Light GPO state from json documents. */
+        result = JSON_Search( ( char * ) pPublishInfo->pPayload,
+                              pPublishInfo->payloadLength,
+                              "state.SpaLight",
+                              sizeof( "state.SpaLight" ) - 1,
+                              &outValue,
+                              ( size_t * ) &outValueLength );
+    }
+    else
+    {
+        /* In this demo, we discard the incoming message
+         * if the version number is not newer than the latest
+         * that we've received before. Your application may use a
+         * different approach.
+         */
+        LogWarn( ( "The received version is smaller than current one!!" ) );
+    }
+
+    if( result == JSONSuccess )
+    {
+        /* Convert the SpaLight state value to a float value. */
+        newSpaLight = ( float ) strtof( outValue, NULL );      // The definition ( float ) is not required in this line as this is what the function strtof() does 
+
+        LogInfo( ( "The new Pool Light GPO state newSpaLight:%.2f, currentSpaLight:%.2f \r\n",
+                   newSpaLight, currentSpaLight ) );
+
+        if( newSpaLight != currentSpaLight )
+        {
+            /* The received PoolLight state is different from the one we retained before, so we switch them
+             * and set the flag. */
+            currentSpaLight = newSpaLight;
+
+            /* State change will be handled in main(), where we will publish a "reported"
+             * state to the device shadow. We do not do it here because we are inside of
+             * a callback from the MQTT library, so that we don't re-enter
+             * the MQTT library. */
+            stateChanged = true;
+        }
+    }
+    else
+    {
+        LogError( ( "No SpaLight in json document!!" ) );
         eventCallbackError = true;
     }
 }
@@ -704,7 +814,7 @@ static void eventCallback( MQTTContext_t * pMqttContext,
  * loops to process incoming messages. Those are not the focus of this demo
  * and therefore, are placed in a separate file shadow_uwl_ctrl_demo_helpers.c.
  */
-int main( int argc,
+int main_temp( int argc,
           char ** argv )
 {
     int returnStatus = EXIT_SUCCESS;
@@ -897,6 +1007,8 @@ int main( int argc,
                               SHADOW_REPORTED_JSON_LENGTH + 1,
                               SHADOW_REPORTED_JSON,
                               ( int ) currentPowerOnState,
+                              ( float ) currentPoolLight,
+                              ( float ) currentSpaLight,
                               ( long unsigned ) clientToken );
 
                     returnStatus = PublishToTopic( SHADOW_TOPIC_STR_UPDATE( THING_NAME, SHADOW_NAME ),

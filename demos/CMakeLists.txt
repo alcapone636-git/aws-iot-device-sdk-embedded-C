@@ -47,8 +47,8 @@ if(NOT ${OpenSSL_FOUND})
             "mqtt_demo_subscription_manager"
             "ota_demo_core_http"
             "ota_demo_core_mqtt"
-            // "shadow_demo_main"
-            "shadow_uwl_ctrl_main"
+            "shadow_demo_main"
+            # "shadow_uwl_ctrl_main"
             "greengrass_demo_local_auth"
     )
     message( WARNING "OpenSSL library could not be found. Demos that use it will be excluded from the default target." )
